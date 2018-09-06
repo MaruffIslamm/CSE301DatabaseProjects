@@ -1,0 +1,40 @@
+create view emp_children as
+select emp_id,child_seq,name
+from children t
+
+select *
+from emp_children
+
+select emp_name,division,dob
+from employee
+where division in ('Rajshahi', 'Rangpur', 'Dhaka')
+
+
+select emp_name as manager
+from employee
+where emp_id in
+(select mng_id 
+from manages
+group by mng_id
+having count(emp_id)>=all(select count(emp_id)
+from manages group by mng_id))
+
+
+update job
+set salary = salary*1.10
+where emp_id in (select emp_id 
+                 from children
+                 group by emp_id
+                 having count(child_seq)<3)
+
+rollback
+
+delete 
+from children
+where emp_id in
+(select emp_id
+from job natural join company
+where com_name='Shapnil')
+
+
+
